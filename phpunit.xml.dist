@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- http://www.phpunit.de/manual/current/en/appendixes.configuration.html -->
+<phpunit
+    backupGlobals               = "false"
+    backupStaticAttributes      = "false"
+    colors                      = "true"
+    convertErrorsToExceptions   = "true"
+    convertNotic<?php
+
+declare(strict_types=1);
+
+namespace src\Constants;
+
+class ConstantsConfig
+{
+    /**
+     * The default currency used for operations.
+     */
+    const DEFAULT_CURRENCY = 'EUR';
+
+    /**
+     * Business client withdrawal fee rate.
+     */
+    const BUSINESS_WITHDRAW_FEE = 0.005;
+
+    /**
+     * Deposit fee rate.
+     */
+    const DEPOSIT_FEE = 0.0003;
+
+    /**
+     * The number of free withdrawals allowed.
+     */
+    const FREE_WITHDRAWALS_LIMIT = 3;
+
+    /**
+     * The amount limit for free withdrawals in EUR.
+     */
+    const FREE_WITHDRAWAL_AMOUNT_LIMIT = 1000.00;
+
+    /**
+     * Private client commission rate for withdrawals.
+     */
+    const PRIVATE_COMMISSION_RATE = 0.003;
+
+    /**
+     * Buffer size for reading files.
+     */
+    public const BUFFER_SIZE = 1000;
+
+    /**
+     * The expected number of columns in input data.
+     */
+    public const COLUMNS_COUNT = 6;
+
+    /**
+     * Number of decimal places for each currency.
+     */
+    public const CURRENCY_DECIMALS = [
+        'JPY' => 0,
+        'USD' => 2,
+        'EUR' => 2
+    ];
+
+    /**
+     * The number of decimals to use for financial calculations.
+     */
+    public const DECIMALS_NUMBER = 2;
+
+    /**
+     * The scale to use for arbitrary precision arithmetic functions.
+     */
+    public const DECIMALS_SCALE = 3;
+}
+esToExceptions  = "true"
+    convertWarningsToExceptions = "true"
+    processIsolation            = "false"
+    stopOnFailure               = "false"
+    syntaxCheck                 = "false"
+    bootstrap                   = "vendor/autoload.php" >
+
+    <testsuites>
+        <testsuite name="Project Test Suite">
+            <directory>tests</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory>./src</directory>
+        </whitelist>
+    </filter>
+</phpunit>
