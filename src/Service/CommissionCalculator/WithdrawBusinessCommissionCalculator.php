@@ -10,14 +10,13 @@ use App\Constants\Constants;
 
 class WithdrawBusinessCommissionCalculator implements CommissionCalculatorInterface
 {
+    use BCRoundUpTrait;
+
     public function calculate(Transaction $transaction): string
     {
-        $fee = $transaction->getAmount() * Constants::BUSINESS_WITHDRAW_FEE;
-
-        // Round up the fee to the nearest currency decimal places
+        $fee = bcmul((string)$transaction->getAmount(), (string)Constants::BUSINESS_WITHDRAW_FEE, Constants::BC_SCALE);
         $decimals = Constants::CURRENCY_DECIMALS[$transaction->getCurrency()] ?? Constants::DECIMALS_NUMBER;
-        $fee = ceil($fee * pow(10, $decimals)) / pow(10, $decimals);
-
-        return number_format($fee, $decimals, '.', '');
+        $fee = $this->bcRoundUp($fee, $decimals);
+        return number_format((float)$fee, $decimals, '.', '');
     }
 }

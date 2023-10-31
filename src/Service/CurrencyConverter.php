@@ -25,7 +25,7 @@ class CurrencyConverter
         }
 
         // Use bc_math for precise division
-        $result = bcdiv((string) $amount, (string) $exchangeRates[$currency], Constants::DECIMALS_SCALE);
+        $result = bcdiv((string)$amount, (string)$exchangeRates[$currency], Constants::BC_SCALE);
 
         return floatval($result);  // Convert back to float for compatibility
     }
@@ -39,7 +39,7 @@ class CurrencyConverter
         }
 
         // Use bc_math for precise multiplication
-        $result = bcmul((string) $amount, (string) $exchangeRates[$currency], Constants::DECIMALS_SCALE);
+        $result = bcmul((string)$amount, (string)$exchangeRates[$currency], Constants::BC_SCALE);
 
         return floatval($result);  // Convert back to float for compatibility
     }

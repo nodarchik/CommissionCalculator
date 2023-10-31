@@ -9,11 +9,14 @@ use App\Service\CurrencyConverter;
 use App\Constants\Constants;
 use App\Repository\TransactionRepository;
 use App\Interfaces\WithdrawCalculatorInterface;
+
 class WithdrawPrivateCommissionCalculator extends WithdrawCommissionCalculator implements WithdrawCalculatorInterface
 {
     // New properties to keep track of free withdrawals and their amounts
     private int $freeWithdrawCount = 0;
     private float $freeWithdrawAmount = 0.0;
+
+    // Implement required methods from interface
     public function setFreeWithdrawCount(int $count): void
     {
         $this->freeWithdrawCount = $count;
@@ -22,10 +25,6 @@ class WithdrawPrivateCommissionCalculator extends WithdrawCommissionCalculator i
     public function setFreeWithdrawAmount(float $amount): void
     {
         $this->freeWithdrawAmount = $amount;
-    }
-    public function __construct(TransactionRepository $transactionRepository, CurrencyConverter $currencyConverter)
-    {
-        parent::__construct($transactionRepository, $currencyConverter);
     }
 
     public function calculate(Transaction $transaction): string
@@ -49,16 +48,19 @@ class WithdrawPrivateCommissionCalculator extends WithdrawCommissionCalculator i
             }
         }
 
-        $fee = $amountInEur * Constants::PRIVATE_COMMISSION_RATE;
+        $fee = bcmul((string)$amountInEur, (string)Constants::PRIVATE_COMMISSION_RATE, Constants::BC_SCALE);
 
+        // Explicitly cast $fee to float
         $feeInTransactionCurrency = $this->currencyConverter->convertAmountFromDefaultCurrency(
-            $fee,
+            (float)$fee,
             $transaction->getCurrency()
         );
 
         $decimals = Constants::CURRENCY_DECIMALS[$transaction->getCurrency()] ?? Constants::DECIMALS_NUMBER;
-        $feeInTransactionCurrency = ceil($feeInTransactionCurrency * pow(10, $decimals)) / pow(10, $decimals);
+        $feeInTransactionCurrency = $this->bcRoundUp((string)$feeInTransactionCurrency, $decimals);
 
-        return number_format($feeInTransactionCurrency, $decimals, '.', '');
+        return number_format((float)$feeInTransactionCurrency, $decimals, '.', '');
     }
+
+    use BCRoundUpTrait;
 }
