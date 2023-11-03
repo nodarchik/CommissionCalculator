@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Model\Transaction;
+use DateTime;
 
 class TransactionRepository
 {
@@ -51,6 +52,20 @@ class TransactionRepository
         $this->transactions = array_filter($this->transactions, function(Transaction $transaction) use ($transactionToDelete) {
             return !($transaction->getUserId() === $transactionToDelete->getUserId() &&
                 $transaction->getDate() === $transactionToDelete->getDate());
+        });
+    }
+    public function getTransactionsForUserInWeek(int $userId, DateTime $date): array
+    {
+        $startOfWeek = clone $date;
+        $startOfWeek->modify('monday this week');
+
+        $endOfWeek = clone $date;
+        $endOfWeek->modify('sunday this week');
+
+        return array_filter($this->transactions, function(Transaction $transaction) use ($userId, $startOfWeek, $endOfWeek) {
+            return $transaction->getUserId() === $userId
+                && $transaction->getDate() >= $startOfWeek
+                && $transaction->getDate() <= $endOfWeek;
         });
     }
 }
