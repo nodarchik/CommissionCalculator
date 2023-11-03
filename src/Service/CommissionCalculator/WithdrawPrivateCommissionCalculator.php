@@ -9,12 +9,24 @@ use App\Service\CurrencyConverter;
 use App\Constants\Constants;
 use App\Repository\TransactionRepository;
 use App\Interfaces\WithdrawCalculatorInterface;
+use App\Service\CommissionCalculator\MathService;
 
 class WithdrawPrivateCommissionCalculator extends WithdrawCommissionCalculator implements WithdrawCalculatorInterface
 {
     // New properties to keep track of free withdrawals and their amounts
     private int $freeWithdrawCount = 0;
     private float $freeWithdrawAmount = 0.0;
+
+    private MathService $mathService;  // Add MathService property
+
+    public function __construct(
+        TransactionRepository $transactionRepository,
+        CurrencyConverter $currencyConverter,
+        MathService $mathService  // Inject MathService into the constructor
+    ) {
+        parent::__construct($transactionRepository, $currencyConverter);
+        $this->mathService = $mathService;
+    }
 
     // Implement required methods from interface
     public function setFreeWithdrawCount(int $count): void
@@ -57,10 +69,10 @@ class WithdrawPrivateCommissionCalculator extends WithdrawCommissionCalculator i
         );
 
         $decimals = Constants::CURRENCY_DECIMALS[$transaction->getCurrency()] ?? Constants::DECIMALS_NUMBER;
-        $feeInTransactionCurrency = $this->bcRoundUp((string)$feeInTransactionCurrency, $decimals);
+
+        // Use MathService for rounding
+        $feeInTransactionCurrency = $this->mathService->bcRoundUp((string)$feeInTransactionCurrency, $decimals);
 
         return number_format((float)$feeInTransactionCurrency, $decimals, '.', '');
     }
-
-    use BCRoundUpTrait;
 }

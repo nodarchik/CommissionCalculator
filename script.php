@@ -9,9 +9,13 @@ $currencyConverter = new App\Service\CurrencyConverter($apiClient);
 $transactionRepository = new App\Repository\TransactionRepository();
 $accountRepository = new App\Repository\AccountRepository();
 
-$depositCalculator = new App\Service\CommissionCalculator\DepositCommissionCalculator();
-$withdrawPrivateCalculator = new App\Service\CommissionCalculator\WithdrawPrivateCommissionCalculator($transactionRepository, $currencyConverter);
-$withdrawBusinessCalculator = new App\Service\CommissionCalculator\WithdrawBusinessCommissionCalculator();
+// Instantiate the MathService
+$mathService = new App\Service\CommissionCalculator\MathService();
+
+$depositCalculator = new App\Service\CommissionCalculator\DepositCommissionCalculator($mathService);
+// Inject MathService into the WithdrawPrivateCommissionCalculator
+$withdrawPrivateCalculator = new App\Service\CommissionCalculator\WithdrawPrivateCommissionCalculator($transactionRepository, $currencyConverter, $mathService);
+$withdrawBusinessCalculator = new App\Service\CommissionCalculator\WithdrawBusinessCommissionCalculator($mathService);
 
 $transactionService = new App\Service\TransactionService(
     $depositCalculator,

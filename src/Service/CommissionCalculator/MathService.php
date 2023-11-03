@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\CommissionCalculator;
 
-trait BCRoundUpTrait
+class MathService
 {
     // Custom function to round up using BC Math
     public function bcRoundUp(string $number, int $precision = 0): string
