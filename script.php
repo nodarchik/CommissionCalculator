@@ -31,7 +31,9 @@ $transactions = $csvReader->read($filePath);
 // Process transactions and collect commissions
 $commissions = [];
 foreach ($transactions as $transaction) {
+    echo 'Processing transaction: Date: ' . $transaction->getDate() . ', User ID: ' . $transaction->getUserId() . ', User Type: ' . $transaction->getUserType() . ', Operation: ' . $transaction->getOperationType() . ', Amount: ' . $transaction->getAmount() . ', Currency: ' . $transaction->getCurrency() . "\n";
     $commission = $transactionService->processTransaction($transaction);
+    echo 'Calculated Commission: ' . $commission . "\n";
     $commissions[] = $commission;
 }
 
