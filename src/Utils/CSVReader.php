@@ -5,27 +5,50 @@ declare(strict_types=1);
 namespace App\Utils;
 
 use App\Model\Transaction;
+use DateTime;
+use Exception;
+use RuntimeException;
 
 class CSVReader
 {
+    private int $currentLine = 1;
+
+    /**
+     * @throws Exception
+     */
     public function read(string $filePath): array
     {
-        $handle = fopen($filePath, 'rb');
+        $handle = fopen($filePath, 'r');
+
+        if ($handle === false) {
+            throw new RuntimeException("Failed to open file: {$filePath}");
+        }
+
         $transactions = [];
 
-        if ($handle !== false) {
-            while (($data = fgetcsv($handle, 1000, ',')) !== false) {
-                $transactions[] = new Transaction(
-                    $data[0],
-                    (int)$data[1],
-                    $data[2],
-                    $data[3],
-                    (float)$data[4],
-                    $data[5]
-                );
+        while (($data = fgetcsv($handle)) !== false) {
+            if (count($data) !== 6) {
+                echo "Warning: Skipping malformed data on line {$this->currentLine}. Expected 6 columns, found " . count($data) . ".\n";
+                $this->currentLine++;
+                continue;
             }
-            fclose($handle);
+
+            [$date, $userId, $userType, $operationType, $amount, $currency] = $data;
+
+            $transaction = new Transaction(
+                (int)$userId,
+                $userType,
+                $operationType,
+                (float)$amount,
+                $currency,
+                new DateTime($date)
+            );
+
+            $transactions[] = $transaction;
+            $this->currentLine++;
         }
+
+        fclose($handle);
 
         return $transactions;
     }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Service\CommissionCalculator;
 
 use App\Constants\Constants;
-use App\Interfaces\PrivateWithdrawCalculatorInterface;
 use App\Model\Transaction;
 use App\Repository\TransactionRepository;
 use App\Service\CurrencyConverter;
@@ -17,11 +16,13 @@ use GuzzleHttp\Exception\GuzzleException;
 /**
  * Calculator for the commission of private withdrawals.
  */
-class WithdrawPrivateCommissionCalculator extends WithdrawCommissionCalculator implements
-    PrivateWithdrawCalculatorInterface
+class WithdrawPrivateCommissionCalculator extends WithdrawCommissionCalculator
 {
     /** @var MathService */
     private MathService $mathService;
+
+    private int $freeWithdrawCount = 0;
+    private float $freeWithdrawAmount = 0.0;
 
     public function __construct(
         TransactionRepository $transactionRepository,
@@ -34,59 +35,63 @@ class WithdrawPrivateCommissionCalculator extends WithdrawCommissionCalculator i
 
     /**
      * @throws GuzzleException
-     * @throws Exception
      */
     public function calculate(Transaction $transaction): string
     {
-        $transactionDate = new DateTime($transaction->getDate());
+        // Reset the counters before calculating for each transaction
+        $this->resetCounters();
 
-        // Explicitly determine the start and end of the week
-        $startOfWeek = clone $transactionDate;
-        $startOfWeek->modify('monday this week');
-        $endOfWeek = clone $transactionDate;
-        $endOfWeek->modify('sunday this week');
+        $this->calculateWeeklyWithdrawals($transaction);
+        $amountForCommission = $this->calculateAmountForCommission($transaction);
+        return $this->calculateFee($amountForCommission, $transaction->getCurrency());
+    }
 
+    /**
+     * @throws GuzzleException
+     * @throws Exception
+     */
+    private function calculateWeeklyWithdrawals(Transaction $transaction): void
+    {
+        $transactionDate = $transaction->getDate();
         $transactionsThisWeek = $this->transactionRepository->getTransactionsForUserInWeek(
             $transaction->getUserId(),
             $transactionDate
         );
 
-        $freeWithdrawCount = 0;
-        $freeWithdrawAmount = 0.0;
-
         foreach ($transactionsThisWeek as $previousTransaction) {
-            // Exclude the current transaction from the count
+            $previousTransactionDate = $previousTransaction->getDate();
             if ($previousTransaction->getOperationType() === 'withdraw' &&
-                $previousTransaction->getDate() !== $transaction->getDate()) {
-                $freeWithdrawCount++;
-                $freeWithdrawAmount += $this->currencyConverter->convertAmountToDefaultCurrency(
+                $previousTransactionDate < $transactionDate) {
+                $this->freeWithdrawCount++;
+                $this->freeWithdrawAmount += $this->currencyConverter->convertAmountToDefaultCurrency(
                     $previousTransaction->getAmount(),
                     $previousTransaction->getCurrency()
                 );
             }
         }
+    }
 
+    /**
+     * @throws GuzzleException
+     */
+    private function calculateAmountForCommission(Transaction $transaction): float
+    {
         $amountInEur = $this->currencyConverter->convertAmountToDefaultCurrency(
             $transaction->getAmount(),
             $transaction->getCurrency()
         );
 
-        // If it's among the first 3 transactions
-        if ($freeWithdrawCount < Constants::PRIVATE_FREE_WITHDRAW_COUNT) {
-            $remainingFreeAmount = Constants::PRIVATE_FREE_WITHDRAW_AMOUNT_LIMIT - $freeWithdrawAmount;
-
-            // Calculate the exceeded amount for commission
-            $amountForCommission = ($amountInEur <= $remainingFreeAmount)
-                ? 0
-                : $amountInEur - $remainingFreeAmount;
-        } else {
-            // For the 4th and subsequent transactions
-            $amountForCommission = $amountInEur;
+        if ($this->freeWithdrawCount < Constants::PRIVATE_FREE_WITHDRAW_COUNT) {
+            $remainingFreeAmount = Constants::PRIVATE_FREE_WITHDRAW_AMOUNT_LIMIT - $this->freeWithdrawAmount;
+            return ($amountInEur <= $remainingFreeAmount) ? 0 : $amountInEur - $remainingFreeAmount;
         }
 
-        return $this->calculateFee($amountForCommission, $transaction->getCurrency());
+        return $amountInEur;
     }
 
+    /**
+     * @throws GuzzleException
+     */
     private function calculateFee(float $amountInEur, string $currency): string
     {
         $fee = bcmul((string)$amountInEur, (string)Constants::PRIVATE_COMMISSION_RATE, Constants::BC_SCALE);
@@ -103,13 +108,12 @@ class WithdrawPrivateCommissionCalculator extends WithdrawCommissionCalculator i
         return number_format((float)$feeInTransactionCurrency, $decimals, '.', '');
     }
 
-    public function setFreeWithdrawCount(int $count): void
+    /**
+     * Reset the counters for free withdrawals.
+     */
+    private function resetCounters(): void
     {
-        // This method remains unimplemented as we've moved the logic to the `calculate` method.
-    }
-
-    public function setFreeWithdrawAmount(float $amount): void
-    {
-        // This method remains unimplemented as we've moved the logic to the `calculate` method.
+        $this->freeWithdrawCount = 0;
+        $this->freeWithdrawAmount = 0.0;
     }
 }

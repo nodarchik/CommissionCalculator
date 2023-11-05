@@ -4,34 +4,31 @@ declare(strict_types=1);
 
 namespace App\Model;
 
+use DateTime;
+
 class Transaction
 {
-    private string $date;
     private int $userId;
     private string $userType;
     private string $operationType;
     private float $amount;
     private string $currency;
+    private DateTime $date;
 
     public function __construct(
-        string $date,
         int $userId,
         string $userType,
         string $operationType,
         float $amount,
-        string $currency
+        string $currency,
+        DateTime $date
     ) {
-        $this->date = $date;
         $this->userId = $userId;
         $this->userType = $userType;
         $this->operationType = $operationType;
         $this->amount = $amount;
         $this->currency = $currency;
-    }
-
-    public function getDate(): string
-    {
-        return $this->date;
+        $this->date = $date;
     }
 
     public function getUserId(): int
@@ -59,4 +56,8 @@ class Transaction
         return $this->currency;
     }
 
+    public function getDate(): DateTime
+    {
+        return $this->date;
+    }
 }

@@ -8,7 +8,6 @@ use App\Interfaces\CommissionCalculatorInterface;
 use App\Model\Transaction;
 use App\Repository\TransactionRepository;
 use App\Service\CurrencyConverter;
-use App\Interfaces\PrivateWithdrawCalculatorInterface;
 
 /**
  * Service responsible for processing transactions.
@@ -18,29 +17,30 @@ class TransactionService
     /** @var CommissionCalculatorInterface */
     private CommissionCalculatorInterface $depositCalculator;
 
-    /** @var PrivateWithdrawCalculatorInterface */
-    private PrivateWithdrawCalculatorInterface $withdrawPrivateCalculator;
+    /** @var CommissionCalculatorInterface */
+    private CommissionCalculatorInterface $withdrawPrivateCalculator;
 
     /** @var CommissionCalculatorInterface */
     private CommissionCalculatorInterface $withdrawBusinessCalculator;
 
     /** @var TransactionRepository */
     private TransactionRepository $transactionRepository;
+
     /** @var CurrencyConverter */
     private CurrencyConverter $currencyConverter;
 
     /**
      * Constructor.
      *
-     * @param CommissionCalculatorInterface      $depositCalculator
-     * @param PrivateWithdrawCalculatorInterface $withdrawPrivateCalculator
-     * @param CommissionCalculatorInterface      $withdrawBusinessCalculator
-     * @param CurrencyConverter                  $currencyConverter
-     * @param TransactionRepository              $transactionRepository
+     * @param CommissionCalculatorInterface $depositCalculator
+     * @param CommissionCalculatorInterface $withdrawPrivateCalculator
+     * @param CommissionCalculatorInterface $withdrawBusinessCalculator
+     * @param CurrencyConverter             $currencyConverter
+     * @param TransactionRepository         $transactionRepository
      */
     public function __construct(
         CommissionCalculatorInterface $depositCalculator,
-        PrivateWithdrawCalculatorInterface $withdrawPrivateCalculator,
+        CommissionCalculatorInterface $withdrawPrivateCalculator,
         CommissionCalculatorInterface $withdrawBusinessCalculator,
         CurrencyConverter $currencyConverter,
         TransactionRepository $transactionRepository
