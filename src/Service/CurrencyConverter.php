@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\Client\ApiClient;
 use App\Constants\Constants;
+use GuzzleHttp\Exception\GuzzleException;
 
 class CurrencyConverter
 {
@@ -16,6 +17,9 @@ class CurrencyConverter
         $this->apiClient = $apiClient;
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function convertAmountToDefaultCurrency(float $amount, string $currency): float
     {
         $exchangeRates = $this->fetchExchangeRates();
@@ -30,6 +34,9 @@ class CurrencyConverter
         return floatval($result);  // Convert back to float for compatibility
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function convertAmountFromDefaultCurrency(float $amount, string $currency): float
     {
         $exchangeRates = $this->fetchExchangeRates();
@@ -44,6 +51,9 @@ class CurrencyConverter
         return floatval($result);  // Convert back to float for compatibility
     }
 
+    /**
+     * @throws GuzzleException
+     */
     private function fetchExchangeRates(): array
     {
         $exchangeRateData = $this->apiClient->fetchExchangeRates();

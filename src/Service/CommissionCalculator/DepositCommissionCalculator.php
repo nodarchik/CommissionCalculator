@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Service\CommissionCalculator;
 
+use App\Constants\Constants;
 use App\Interfaces\CommissionCalculatorInterface;
 use App\Model\Transaction;
-use App\Constants\Constants;
-use App\Service\CommissionCalculator\MathService;
+use App\Service\MathService;
 
 class DepositCommissionCalculator implements CommissionCalculatorInterface
 {

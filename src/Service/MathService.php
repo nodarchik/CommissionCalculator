@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Service\CommissionCalculator;
+namespace App\Service;
 
 class MathService
 {

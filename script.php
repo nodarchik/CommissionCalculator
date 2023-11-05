@@ -10,7 +10,7 @@ $transactionRepository = new App\Repository\TransactionRepository();
 $accountRepository = new App\Repository\AccountRepository();
 
 // Instantiate the MathService
-$mathService = new App\Service\CommissionCalculator\MathService();
+$mathService = new \App\Service\MathService();
 
 $depositCalculator = new App\Service\CommissionCalculator\DepositCommissionCalculator($mathService);
 // Inject MathService into the WithdrawPrivateCommissionCalculator

@@ -8,19 +8,39 @@ use App\Interfaces\CommissionCalculatorInterface;
 use App\Model\Transaction;
 use App\Repository\TransactionRepository;
 use App\Service\CurrencyConverter;
-use App\Interfaces\WithdrawCalculatorInterface;
+use App\Interfaces\PrivateWithdrawCalculatorInterface;
 
+/**
+ * Service responsible for processing transactions.
+ */
 class TransactionService
 {
+    /** @var CommissionCalculatorInterface */
     private CommissionCalculatorInterface $depositCalculator;
-    private WithdrawCalculatorInterface $withdrawPrivateCalculator;
-    private CommissionCalculatorInterface $withdrawBusinessCalculator;
-    private CurrencyConverter $currencyConverter;
-    private TransactionRepository $transactionRepository;
 
+    /** @var PrivateWithdrawCalculatorInterface */
+    private PrivateWithdrawCalculatorInterface $withdrawPrivateCalculator;
+
+    /** @var CommissionCalculatorInterface */
+    private CommissionCalculatorInterface $withdrawBusinessCalculator;
+
+    /** @var TransactionRepository */
+    private TransactionRepository $transactionRepository;
+    /** @var CurrencyConverter */
+    private CurrencyConverter $currencyConverter;
+
+    /**
+     * Constructor.
+     *
+     * @param CommissionCalculatorInterface      $depositCalculator
+     * @param PrivateWithdrawCalculatorInterface $withdrawPrivateCalculator
+     * @param CommissionCalculatorInterface      $withdrawBusinessCalculator
+     * @param CurrencyConverter                  $currencyConverter
+     * @param TransactionRepository              $transactionRepository
+     */
     public function __construct(
         CommissionCalculatorInterface $depositCalculator,
-        WithdrawCalculatorInterface $withdrawPrivateCalculator,
+        PrivateWithdrawCalculatorInterface $withdrawPrivateCalculator,
         CommissionCalculatorInterface $withdrawBusinessCalculator,
         CurrencyConverter $currencyConverter,
         TransactionRepository $transactionRepository
@@ -32,30 +52,34 @@ class TransactionService
         $this->transactionRepository = $transactionRepository;
     }
 
+    /**
+     * Process a given transaction.
+     *
+     * @param Transaction $transaction
+     * @return string
+     */
     public function processTransaction(Transaction $transaction): string
     {
         $this->transactionRepository->addTransaction($transaction);
-
         $calculator = $this->selectCalculator($transaction);
-
-        // If the transaction is a withdrawal by a private user, update the state of the private withdrawal calculator
-        if ($transaction->getUserType() === 'private' && $transaction->getOperationType() === 'withdraw') {
-            // ... (Rest of the code remains the same)
-        }
 
         return $calculator->calculate($transaction);
     }
 
+    /**
+     * Select the appropriate calculator based on the transaction.
+     *
+     * @param Transaction $transaction
+     * @return CommissionCalculatorInterface
+     */
     private function selectCalculator(Transaction $transaction): CommissionCalculatorInterface
     {
         if ($transaction->getOperationType() === 'deposit') {
             return $this->depositCalculator;
         }
 
-        if ($transaction->getUserType() === 'private') {
-            return $this->withdrawPrivateCalculator;
-        }
-
-        return $this->withdrawBusinessCalculator;
+        return $transaction->getUserType() === 'private'
+            ? $this->withdrawPrivateCalculator
+            : $this->withdrawBusinessCalculator;
     }
 }
