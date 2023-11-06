@@ -38,14 +38,6 @@ class WithdrawPrivateCommissionCalculator extends WithdrawCommissionCalculator
     private float $freeWithdrawAmount = 0.0;
 
     /**
-     * Commission for the current transaction.
-     *
-     * @var float
-     */
-    private float $amountForCommission = 0.0;
-
-
-    /**
      * Constructor to initialize required services and repositories.
      */
     public function __construct(
@@ -82,7 +74,6 @@ class WithdrawPrivateCommissionCalculator extends WithdrawCommissionCalculator
      */
     private function calculateWeeklyWithdrawals(Transaction $transaction): void
     {
-
         $transactionDate = $transaction->getDate();
         $transactionsThisWeek = $this->transactionRepository->getTransactionsForUserInWeek(
             $transaction->getUserId(),
@@ -90,9 +81,13 @@ class WithdrawPrivateCommissionCalculator extends WithdrawCommissionCalculator
         );
 
         foreach ($transactionsThisWeek as $previousTransaction) {
+            if ($previousTransaction === $transaction) {
+                continue;  // skip the current transaction
+            }
+
             $previousTransactionDate = $previousTransaction->getDate();
             if ($previousTransaction->getOperationType() === 'withdraw' &&
-                $previousTransactionDate < $transactionDate) {
+                $previousTransactionDate <= $transactionDate) {
                 $this->freeWithdrawCount++;
                 $this->freeWithdrawAmount += $this->currencyConverter->convertAmountToDefaultCurrency(
                     $previousTransaction->getAmount(),
@@ -100,7 +95,11 @@ class WithdrawPrivateCommissionCalculator extends WithdrawCommissionCalculator
                 );
             }
         }
+
+        // Ensure the freeWithdrawAmount does not exceed the weekly limit
+        $this->freeWithdrawAmount = min($this->freeWithdrawAmount, Constants::PRIVATE_FREE_WITHDRAW_AMOUNT_LIMIT);
     }
+
 
     /**
      * Calculate the amount that should be considered for commission.
@@ -123,8 +122,6 @@ class WithdrawPrivateCommissionCalculator extends WithdrawCommissionCalculator
                 return $amountInEur - $remainingFreeAmount;
             }
         }
-
-
         return $amountInEur;
     }
 
@@ -158,6 +155,5 @@ class WithdrawPrivateCommissionCalculator extends WithdrawCommissionCalculator
     {
         $this->freeWithdrawCount = 0;
         $this->freeWithdrawAmount = 0.0;
-        $this->amountForCommission = 0.0;
     }
 }

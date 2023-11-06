@@ -1,11 +1,14 @@
-# Paysera Commission task skeleton
+2014-12-31,4,private,withdraw,1200.00,EUR     0.60
+2015-01-01,4,private,withdraw,1000.00,EUR     3.00
+2016-01-05,4,private,withdraw,1000.00,EUR     0.00
+2016-01-05,1,private,deposit,200.00,EUR       0.06
+2016-01-06,2,business,withdraw,300.00,EUR     1.50
+2016-01-06,1,private,withdraw,30000,JPY       0
+2016-01-07,1,private,withdraw,1000.00,EUR     0.70
+2016-01-07,1,private,withdraw,100.00,USD      0.30
+2016-01-10,1,private,withdraw,100.00,EUR      0.30
+2016-01-10,2,business,deposit,10000.00,EUR    3.00
+2016-01-10,3,private,withdraw,1000.00,EUR     0.00
+2016-02-15,1,private,withdraw,300.00,EUR      0.00
+2016-02-19,5,private,withdraw,3000000,JPY     8612
 
-Following steps:
-- don't forget to change `Paysera` namespace and package name in `composer.json`
- to your own, as `Paysera` keyword should not be used anywhere in your task;
-- `\Paysera\CommissionTask\Service\Math` is an example class provided for the skeleton and could or could not be used by your preference;
-- needed scripts could be found inside `composer.json`;
-- before submitting the task make sure that all the scripts pass (`composer run test` in particular);
-- this file should be updated before submitting the task with the documentation on how to run your program.
-
-Good luck! :) 
