@@ -98,5 +98,4 @@ class Constants
      * The scale to use for arbitrary precision arithmetic functions.
      */
     public const BC_SCALE = 10;
-
 }

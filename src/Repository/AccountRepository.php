@@ -35,4 +35,3 @@ class AccountRepository
         unset($this->userAccounts[$userId]);
     }
 }
-

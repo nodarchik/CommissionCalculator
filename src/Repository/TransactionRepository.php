@@ -21,18 +21,22 @@ class TransactionRepository
     {
         try {
             $startOfWeek = clone $date;
-            $startOfWeek->modify('monday this week');
+            $startOfWeek->modify('monday this week')->setTime(0, 0);
 
             $endOfWeek = clone $date;
-            $endOfWeek->modify('sunday this week');
+            $endOfWeek->modify('sunday this week')->setTime(23, 59, 59);
+
+            // Convert DateTime objects to string format for comparison
+            $startOfWeekStr = $startOfWeek->format('Y-m-d H:i:s');
+            $endOfWeekStr = $endOfWeek->format('Y-m-d H:i:s');
 
             return array_filter(
                 $this->transactions,
-                function (Transaction $transaction) use ($userId, $startOfWeek, $endOfWeek) {
-                    $transactionDate = $transaction->getDate();
+                function (Transaction $transaction) use ($userId, $startOfWeekStr, $endOfWeekStr) {
+                    $transactionDateStr = $transaction->getDate()->format('Y-m-d H:i:s');
                     return $transaction->getUserId() === $userId
-                        && $transactionDate >= $startOfWeek
-                        && $transactionDate <= $endOfWeek;
+                        && $transactionDateStr >= $startOfWeekStr
+                        && $transactionDateStr <= $endOfWeekStr;
                 }
             );
         } catch (Exception $e) {
