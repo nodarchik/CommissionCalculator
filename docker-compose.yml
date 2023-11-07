@@ -8,3 +8,11 @@ services:
       - ./:/app
     ports:
       - "9000:9000"
+    command: ["php", "script.php", "input.csv"]  # Starts the PHP server
+
+  phpunit:
+    build: .
+    image: commission-calculator:latest
+    volumes:
+      - ./:/app
+    command: ["./bin/phpunit"]  # Runs PHPUnit tests

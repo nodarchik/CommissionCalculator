@@ -18,23 +18,20 @@ List the different parameters available to your container
 | Parameter    | Description                                                                                                             |
 |--------------|-------------------------------------------------------------------------------------------------------------------------|
 | `script.php` | The PHP script that will be executed. Starting point of application.                                                    |
-| `input.csv`  | The input CSV file containing transactions to process.                                                                  |
+| `input.csv`  | The input CSV file containing transactions to process, Uou can change name in dockerfile to insert your data.           |
 | `output.csv` | The output CSV file where commissions will be written. Currently it is statically asigned, you will see results in CLI. |
 
-Build and start the Docker container, it will automatically display the results in CLI
+## Build and start the Docker container, it will automatically display the results in CLI
 
 ```sh
-docker-compose up --build
+docker-compose up app
 ```
 
-## Tests
-
+## Start Tests
 
 ```sh
-# Example test command
-docker run -v $(pwd):/app -w /app commission-calculator:latest php vendor/bin/phpunit
+docker-compose up phpunit
 ```
-
 
 ## Built With
 
