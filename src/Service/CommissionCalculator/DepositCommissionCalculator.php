@@ -9,6 +9,10 @@ use App\Interfaces\CommissionCalculatorInterface;
 use App\Model\Transaction;
 use App\Service\MathService;
 
+/**
+ * Calculator for the commission of deposits.
+ * Implements the CommissionCalculatorInterface to provide specific logic for deposit commissions.
+ */
 class DepositCommissionCalculator implements CommissionCalculatorInterface
 {
     private MathService $mathService;
@@ -16,6 +20,14 @@ class DepositCommissionCalculator implements CommissionCalculatorInterface
     {
         $this->mathService = $mathService;
     }
+
+    /**
+     * Calculate the commission for a given deposit transaction.
+     * Logic to calculate the commission specific to deposits.
+     *
+     * @param Transaction $transaction
+     * @return string               Commission amount as a formatted string.
+     */
     public function calculate(Transaction $transaction): string
     {
         $fee = bcmul((string)$transaction->getAmount(), (string)Constants::DEPOSIT_FEE, Constants::BC_SCALE);

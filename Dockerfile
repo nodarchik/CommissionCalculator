@@ -26,4 +26,4 @@ COPY . .
 RUN chown -R www-data:www-data /app
 
 # Run the PHP script when the container starts
-# CMD ["php", "script.php", "input.csv"]
+CMD ["php", "script.php", "input.csv"]

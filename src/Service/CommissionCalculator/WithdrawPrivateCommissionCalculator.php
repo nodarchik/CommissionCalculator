@@ -14,6 +14,7 @@ use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * Calculator for the commission of private withdrawals.
+ * Extends the WithdrawCommissionCalculator to provide specific logic for private withdrawals.
  */
 class WithdrawPrivateCommissionCalculator extends WithdrawCommissionCalculator
 {
@@ -38,7 +39,12 @@ class WithdrawPrivateCommissionCalculator extends WithdrawCommissionCalculator
     private float $freeWithdrawAmount = 0.0;
 
     /**
-     * Constructor to initialize required services and repositories.
+     * Constructor to initialize the required services and repositories.
+     * Inherits dependencies from parent class and initializes the math service.
+     *
+     * @param TransactionRepository $transactionRepository
+     * @param CurrencyConverter     $currencyConverter
+     * @param MathService           $mathService
      */
     public function __construct(
         TransactionRepository $transactionRepository,
@@ -50,8 +56,11 @@ class WithdrawPrivateCommissionCalculator extends WithdrawCommissionCalculator
     }
 
     /**
-     * Calculate the commission for a given transaction.
+     * Calculate the commission for a given private withdrawal transaction.
+     * Resets the counters, calculates weekly withdrawals, and computes the commission amount.
      *
+     * @param Transaction $transaction
+     * @return string               Commission amount as a formatted string.
      * @throws GuzzleException
      */
     public function calculate(Transaction $transaction): string
@@ -67,10 +76,11 @@ class WithdrawPrivateCommissionCalculator extends WithdrawCommissionCalculator
 
 
     /**
-     * Calculate the total amount and count of withdrawals for the user in the current week.
+     * Calculate the amount of weekly withdrawals for a user.
+     * Fetches the transactions for the user and updates the counters accordingly.
      *
+     * @param Transaction $transaction
      * @throws GuzzleException
-     * @throws Exception
      */
     private function calculateWeeklyWithdrawals(Transaction $transaction): void
     {
@@ -102,8 +112,11 @@ class WithdrawPrivateCommissionCalculator extends WithdrawCommissionCalculator
 
 
     /**
-     * Calculate the amount that should be considered for commission.
+     * Determine the amount on which commission should be applied.
+     * Based on the user's weekly withdrawal count and amount, it determines the commissionable amount.
      *
+     * @param Transaction $transaction
+     * @return float                 Amount for commission calculation.
      * @throws GuzzleException
      */
     private function calculateAmountForCommission(Transaction $transaction): float
@@ -126,10 +139,12 @@ class WithdrawPrivateCommissionCalculator extends WithdrawCommissionCalculator
     }
 
 
-
     /**
-     * Calculate the commission fee based on the amount and currency.
+     * Calculate the fee based on the provided amount and currency.
      *
+     * @param float $amountInEur
+     * @param string $currency
+     * @return string               Calculated fee as a formatted string.
      * @throws GuzzleException
      */
     private function calculateFee(float $amountInEur, string $currency): string

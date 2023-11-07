@@ -1,14 +1,44 @@
-2014-12-31,4,private,withdraw,1200.00,EUR     0.60
-2015-01-01,4,private,withdraw,1000.00,EUR     3.00
-2016-01-05,4,private,withdraw,1000.00,EUR     0.00
-2016-01-05,1,private,deposit,200.00,EUR       0.06
-2016-01-06,2,business,withdraw,300.00,EUR     1.50
-2016-01-06,1,private,withdraw,30000,JPY       0
-2016-01-07,1,private,withdraw,1000.00,EUR     0.70
-2016-01-07,1,private,withdraw,100.00,USD      0.30
-2016-01-10,1,private,withdraw,100.00,EUR      0.30
-2016-01-10,2,business,deposit,10000.00,EUR    3.00
-2016-01-10,3,private,withdraw,1000.00,EUR     0.00
-2016-02-15,1,private,withdraw,300.00,EUR      0.00
-2016-02-19,5,private,withdraw,3000000,JPY     8612
+# Commission Calculator Application
+
+## Overview
+Commission Calculator is a PHP command-line application designed to calculate commissions for transactions based on predefined rules. The application reads transaction data from a CSV file, processes each transaction, and outputs the commission fees into an output CSV file.
+
+## Prerequisites
+- Docker
+- docker-compose
+
+## Getting Started
+
+These instructions will cover usage information and for the docker container
+
+### Container Parameters
+
+List the different parameters available to your container
+
+| Parameter    | Description                                                                                                             |
+|--------------|-------------------------------------------------------------------------------------------------------------------------|
+| `script.php` | The PHP script that will be executed. Starting point of application.                                                    |
+| `input.csv`  | The input CSV file containing transactions to process.                                                                  |
+| `output.csv` | The output CSV file where commissions will be written. Currently it is statically asigned, you will see results in CLI. |
+
+Build and start the Docker container, it will automatically display the results in CLI
+
+```sh
+docker-compose up --build
+```
+
+## Tests
+
+
+```sh
+# Example test command
+docker run -v $(pwd):/app -w /app commission-calculator:latest php vendor/bin/phpunit
+```
+
+
+## Built With
+
+- PHP 8.2
+- Docker
+- Composer
 

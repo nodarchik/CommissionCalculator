@@ -9,6 +9,10 @@ use App\Interfaces\CommissionCalculatorInterface;
 use App\Model\Transaction;
 use App\Service\MathService;
 
+/**
+ * Calculator for the commission of business withdrawals.
+ * Extends the WithdrawCommissionCalculator to provide specific logic for business withdrawals.
+ */
 class WithdrawBusinessCommissionCalculator implements CommissionCalculatorInterface
 {
     private MathService $mathService;
@@ -16,6 +20,13 @@ class WithdrawBusinessCommissionCalculator implements CommissionCalculatorInterf
     {
         $this->mathService = $mathService;
     }
+    /**
+     * Calculate the commission for a given business withdrawal transaction.
+     * Logic to calculate the commission specific to business withdrawals.
+     *
+     * @param Transaction $transaction
+     * @return string               Commission amount as a formatted string.
+     */
     public function calculate(Transaction $transaction): string
     {
         $fee = bcmul((string)$transaction->getAmount(), (string)Constants::BUSINESS_WITHDRAW_FEE, Constants::BC_SCALE);
