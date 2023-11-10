@@ -20,7 +20,11 @@ List the different parameters available to your container
 | `script.php` | The PHP script that will be executed. Starting point of application.                                                    |
 | `input.csv`  | The input CSV file containing transactions to process, Uou can change name in dockerfile to insert your data.           |
 | `output.csv` | The output CSV file where commissions will be written. Currently it is statically asigned, you will see results in CLI. |
+## Install composer
 
+```sh
+composer install
+```
 ## Build and start the Docker container, it will automatically display the results in CLI
 
 ```sh
