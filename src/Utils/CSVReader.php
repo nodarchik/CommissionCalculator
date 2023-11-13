@@ -35,10 +35,10 @@ class CSVReader
             [$date, $userId, $userType, $operationType, $amount, $currency] = $data;
 
             yield new Transaction(
-                (int)$userId,
+                $userId,
                 $userType,
                 $operationType,
-                (float)$amount,
+                $amount,
                 $currency,
                 new DateTime($date)
             );

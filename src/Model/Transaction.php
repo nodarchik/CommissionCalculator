@@ -11,7 +11,7 @@ class Transaction
     private int $userId;
     private string $userType;
     private string $operationType;
-    private float $amount;
+    private string $amount;
     private string $currency;
     private DateTime $date;
 
@@ -19,7 +19,7 @@ class Transaction
         int $userId,
         string $userType,
         string $operationType,
-        float $amount,
+        string $amount,
         string $currency,
         DateTime $date
     ) {
@@ -46,7 +46,7 @@ class Transaction
         return $this->operationType;
     }
 
-    public function getAmount(): float
+    public function getAmount(): string
     {
         return $this->amount;
     }

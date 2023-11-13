@@ -6,6 +6,7 @@ services:
     image: commission-calculator:latest
     volumes:
       - ./:/app
+      - /app/vendor
     command: ["php", "script.php", "input.csv"]
 
   phpunit:
@@ -13,4 +14,5 @@ services:
     image: commission-calculator:latest
     volumes:
       - ./:/app
+      - /app/vendor
     command: ["./bin/phpunit"]
