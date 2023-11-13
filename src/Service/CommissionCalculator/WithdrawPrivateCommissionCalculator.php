@@ -12,40 +12,11 @@ use App\Service\MathService;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 
-/**
- * Calculator for the commission of private withdrawals.
- * Extends the WithdrawCommissionCalculator to provide specific logic for private withdrawals.
- */
 class WithdrawPrivateCommissionCalculator extends WithdrawCommissionCalculator
 {
-    /**
-     * Math service to perform mathematical operations.
-     *
-     * @var MathService
-     */
     private MathService $mathService;
-
-    /**
-     * Counter to track the number of free withdrawals.
-     *
-     * @var int
-     */
     private int $freeWithdrawCount = 0;
-    /**
-     * Counter to track the total amount of free withdrawals in EUR.
-     *
-     * @var float
-     */
     private float $freeWithdrawAmount = 0.0;
-
-    /**
-     * Constructor to initialize the required services and repositories.
-     * Inherits dependencies from parent class and initializes the math service.
-     *
-     * @param TransactionRepository $transactionRepository
-     * @param CurrencyConverter     $currencyConverter
-     * @param MathService           $mathService
-     */
     public function __construct(
         TransactionRepository $transactionRepository,
         CurrencyConverter $currencyConverter,
@@ -56,16 +27,10 @@ class WithdrawPrivateCommissionCalculator extends WithdrawCommissionCalculator
     }
 
     /**
-     * Calculate the commission for a given private withdrawal transaction.
-     * Resets the counters, calculates weekly withdrawals, and computes the commission amount.
-     *
-     * @param Transaction $transaction
-     * @return string               Commission amount as a formatted string.
      * @throws GuzzleException
      */
     public function calculate(Transaction $transaction): string
     {
-        // Reset the counters and commission at the start of each transaction
         $this->resetCounters();
         $this->calculateWeeklyWithdrawals($transaction);
 
@@ -74,12 +39,7 @@ class WithdrawPrivateCommissionCalculator extends WithdrawCommissionCalculator
         return $this->calculateFee($amountForCommission, $transaction->getCurrency());
     }
 
-
     /**
-     * Calculate the amount of weekly withdrawals for a user.
-     * Fetches the transactions for the user and updates the counters accordingly.
-     *
-     * @param Transaction $transaction
      * @throws GuzzleException
      */
     private function calculateWeeklyWithdrawals(Transaction $transaction): void
@@ -92,9 +52,8 @@ class WithdrawPrivateCommissionCalculator extends WithdrawCommissionCalculator
 
         foreach ($transactionsThisWeek as $previousTransaction) {
             if ($previousTransaction === $transaction) {
-                continue;  // skip the current transaction
+                continue;
             }
-
             $previousTransactionDate = $previousTransaction->getDate();
             if ($previousTransaction->getOperationType() === 'withdraw' &&
                 $previousTransactionDate <= $transactionDate) {
@@ -105,18 +64,11 @@ class WithdrawPrivateCommissionCalculator extends WithdrawCommissionCalculator
                 );
             }
         }
-
-        // Ensure the freeWithdrawAmount does not exceed the weekly limit
         $this->freeWithdrawAmount = min($this->freeWithdrawAmount, Constants::PRIVATE_FREE_WITHDRAW_AMOUNT_LIMIT);
     }
 
 
     /**
-     * Determine the amount on which commission should be applied.
-     * Based on the user's weekly withdrawal count and amount, it determines the commissionable amount.
-     *
-     * @param Transaction $transaction
-     * @return float                 Amount for commission calculation.
      * @throws GuzzleException
      */
     private function calculateAmountForCommission(Transaction $transaction): float
@@ -137,14 +89,7 @@ class WithdrawPrivateCommissionCalculator extends WithdrawCommissionCalculator
         }
         return $amountInEur;
     }
-
-
     /**
-     * Calculate the fee based on the provided amount and currency.
-     *
-     * @param float $amountInEur
-     * @param string $currency
-     * @return string               Calculated fee as a formatted string.
      * @throws GuzzleException
      */
     private function calculateFee(float $amountInEur, string $currency): string
@@ -162,10 +107,6 @@ class WithdrawPrivateCommissionCalculator extends WithdrawCommissionCalculator
 
         return number_format((float)$feeInTransactionCurrency, $decimals, '.', '');
     }
-
-    /**
-     * Reset the counters for free withdrawals.
-     */
     private function resetCounters(): void
     {
         $this->freeWithdrawCount = 0;

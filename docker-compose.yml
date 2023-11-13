@@ -6,13 +6,11 @@ services:
     image: commission-calculator:latest
     volumes:
       - ./:/app
-    ports:
-      - "9000:9000"
-    command: ["php", "script.php", "input.csv"]  # Starts the PHP server
+    command: ["php", "script.php", "input.csv"]
 
   phpunit:
     build: .
     image: commission-calculator:latest
     volumes:
       - ./:/app
-    command: ["./bin/phpunit"]  # Runs PHPUnit tests
+    command: ["./bin/phpunit"]
