@@ -22,10 +22,7 @@ class CurrencyConverterTest extends TestCase
      */
     protected function setUp(): void
     {
-        // Create a mock for the ApiClient dependency.
         $this->apiClientMock = $this->createMock(ApiClient::class);
-
-        // Instantiate the service with the mocked ApiClient.
         $this->currencyConverter = new CurrencyConverter($this->apiClientMock);
     }
 
@@ -34,20 +31,14 @@ class CurrencyConverterTest extends TestCase
      */
     public function testConvertToDefaultCurrencyWithDifferentCurrency()
     {
-        // Define a test amount and a non-default currency.
         $amount = 100.0;
         $currency = 'USD';
-        $exchangeRate = 1.2; // Assuming 1 USD = 0.83 EUR (approximate)
-
-        // Mock the ApiClient to return a predefined exchange rate.
+        $exchangeRate = 1.2;
         $this->apiClientMock->method('fetchExchangeRates')
             ->willReturn(['rates' => [$currency => $exchangeRate]]);
 
         $convertedAmount = $this->currencyConverter->convertAmountToDefaultCurrency($amount, $currency);
-
-        // Calculate the expected amount using bcdiv for precision.
         $expectedAmount = bcdiv((string)$amount, (string)$exchangeRate, Constants::BC_SCALE);
-
         $this->assertEquals(floatval($expectedAmount), $convertedAmount, 'The amount should be correctly converted');
     }
 }

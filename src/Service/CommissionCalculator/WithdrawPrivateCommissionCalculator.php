@@ -33,9 +33,7 @@ class WithdrawPrivateCommissionCalculator extends WithdrawCommissionCalculator
     {
         $this->resetCounters();
         $this->calculateWeeklyWithdrawals($transaction);
-
         $amountForCommission = $this->calculateAmountForCommission($transaction);
-
         return $this->calculateFee($amountForCommission, $transaction->getCurrency());
     }
 
@@ -49,7 +47,6 @@ class WithdrawPrivateCommissionCalculator extends WithdrawCommissionCalculator
             $transaction->getUserId(),
             $transactionDate
         );
-
         foreach ($transactionsThisWeek as $previousTransaction) {
             if ($previousTransaction === $transaction) {
                 continue;
@@ -67,7 +64,6 @@ class WithdrawPrivateCommissionCalculator extends WithdrawCommissionCalculator
         $this->freeWithdrawAmount = min($this->freeWithdrawAmount, Constants::PRIVATE_FREE_WITHDRAW_AMOUNT_LIMIT);
     }
 
-
     /**
      * @throws GuzzleException
      */
@@ -78,33 +74,30 @@ class WithdrawPrivateCommissionCalculator extends WithdrawCommissionCalculator
             $transaction->getCurrency()
         );
 
-        if ($this->freeWithdrawCount < Constants::PRIVATE_FREE_WITHDRAW_COUNT) {
-            $remainingFreeAmount = max(Constants::PRIVATE_FREE_WITHDRAW_AMOUNT_LIMIT - $this->freeWithdrawAmount, 0.0);
-
-            if ($amountInEur <= $remainingFreeAmount) {
-                return 0;
-            } else {
-                return $amountInEur - $remainingFreeAmount;
-            }
+        if ($this->freeWithdrawCount >= Constants::PRIVATE_FREE_WITHDRAW_COUNT) {
+            return $amountInEur;
         }
-        return $amountInEur;
+
+        $remainingFreeAmount = Constants::PRIVATE_FREE_WITHDRAW_AMOUNT_LIMIT - $this->freeWithdrawAmount;
+        if ($amountInEur <= $remainingFreeAmount) {
+            return 0.0;
+        }
+
+        return $amountInEur - $remainingFreeAmount;
     }
+
     /**
      * @throws GuzzleException
      */
     private function calculateFee(float $amountInEur, string $currency): string
     {
         $fee = bcmul((string)$amountInEur, (string)Constants::PRIVATE_COMMISSION_RATE, Constants::BC_SCALE);
-
         $feeInTransactionCurrency = $this->currencyConverter->convertAmountFromDefaultCurrency(
             (float)$fee,
             $currency
         );
-
         $decimals = Constants::CURRENCY_DECIMALS[$currency] ?? Constants::DECIMALS_NUMBER;
-
         $feeInTransactionCurrency = $this->mathService->bcRoundUp((string)$feeInTransactionCurrency, $decimals);
-
         return number_format((float)$feeInTransactionCurrency, $decimals, '.', '');
     }
     private function resetCounters(): void

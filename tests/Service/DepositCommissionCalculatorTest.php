@@ -23,33 +23,23 @@ class DepositCommissionCalculatorTest extends TestCase
      */
     protected function setUp(): void
     {
-        // Create a mock for the MathService dependency.
         $this->mathServiceMock = $this->createMock(MathService::class);
-
-        // Instantiate the DepositCommissionCalculator with the mocked MathService.
         $this->calculator = new DepositCommissionCalculator($this->mathServiceMock);
     }
 
     public function testCalculateDepositCommission()
     {
-        // Define a test transaction with known values.
         $transaction = new Transaction(
-            1, // User ID
-            'private', // User type
-            'deposit', // Operation type
-            200.0, // Amount
-            'EUR', // Currency
-            new DateTime('now') // Date
+            1,
+            'private',
+            'deposit',
+            200.0,
+            'EUR',
+            new DateTime('now')
         );
-
-        // Set the expected fee and configure the mock to return this fee.
-        $expectedFee = '0.06'; // Assuming the deposit fee is 0.03% for easy math.
+        $expectedFee = '0.06';
         $this->mathServiceMock->method('bcRoundUp')->willReturn($expectedFee);
-
-        // Call the calculate method.
         $commission = $this->calculator->calculate($transaction);
-
-        // Check that the commission is calculated as expected.
         $this->assertEquals($expectedFee, $commission, 'The calculated commission should match the expected fee.');
     }
 }

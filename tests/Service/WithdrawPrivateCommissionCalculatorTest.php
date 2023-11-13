@@ -27,12 +27,10 @@ class WithdrawPrivateCommissionCalculatorTest extends TestCase
      */
     protected function setUp(): void
     {
-        // Create mock objects for the dependencies
         $this->transactionRepositoryMock = $this->createMock(TransactionRepository::class);
         $this->currencyConverterMock = $this->createMock(CurrencyConverter::class);
         $this->mathServiceMock = $this->createMock(MathService::class);
 
-        // Instantiate the service with mock dependencies
         $this->calculator = new WithdrawPrivateCommissionCalculator(
             $this->transactionRepositoryMock,
             $this->currencyConverterMock,
@@ -54,8 +52,6 @@ class WithdrawPrivateCommissionCalculatorTest extends TestCase
      */
     public function testCalculateCommissionForFirstFreeWithdrawal()
     {
-        // Assuming Constants::PRIVATE_FREE_WITHDRAW_AMOUNT_LIMIT is 1000
-        // Configure the stubs with expected behavior
         $this->transactionRepositoryMock->method('getTransactionsForUserInWeek')
             ->willReturn([]);
         $this->currencyConverterMock->method('convertAmountToDefaultCurrency')
@@ -76,20 +72,16 @@ class WithdrawPrivateCommissionCalculatorTest extends TestCase
      */
     public function testCalculateCommissionWithNonDefaultCurrency()
     {
-        // Assuming the user has already made withdrawals that reach the free limit
         $this->transactionRepositoryMock->method('getTransactionsForUserInWeek')
             ->willReturn([$this->createMock(Transaction::class)]);
-
-        // Simulate a currency conversion from USD to EUR
         $this->currencyConverterMock->method('convertAmountToDefaultCurrency')
-            ->willReturn(900.0); // The converted amount in EUR
+            ->willReturn(900.0);
 
-        // Simulate a currency conversion from EUR to USD for the fee amount
         $this->currencyConverterMock->method('convertAmountFromDefaultCurrency')
-            ->willReturn(1.1); // The converted amount in USD
+            ->willReturn(1.1);
 
         $this->mathServiceMock->method('bcRoundUp')
-            ->willReturn('1.10'); // Simulate rounding up to 2 decimal places
+            ->willReturn('1.10');
 
         $transaction = new Transaction(1, 'private', 'withdraw', 1000.0, 'USD', new DateTime('this week'));
 
@@ -104,24 +96,16 @@ class WithdrawPrivateCommissionCalculatorTest extends TestCase
      */
     public function testResetCountersBetweenTransactions()
     {
-        // Simulate two transactions in the same week
         $transactions = [
             $this->createMock(Transaction::class),
             $this->createMock(Transaction::class)
         ];
-
         $this->transactionRepositoryMock->method('getTransactionsForUserInWeek')
             ->willReturnOnConsecutiveCalls($transactions, []);
-
         $transaction1 = new Transaction(1, 'private', 'withdraw', 100.0, 'EUR', new DateTime('this week'));
         $transaction2 = new Transaction(1, 'private', 'withdraw', 100.0, 'EUR', new DateTime('this week'));
-
-        // Calculate commission for the first transaction
         $this->calculator->calculate($transaction1);
-        // Calculate commission for the second transaction
         $commission = $this->calculator->calculate($transaction2);
-
-        // The commission for the second transaction should be treated independently
         $this->assertEquals('0.00', $commission, 'The counters should be reset between transactions.');
     }
 }

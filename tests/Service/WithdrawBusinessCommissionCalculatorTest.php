@@ -23,33 +23,23 @@ class WithdrawBusinessCommissionCalculatorTest extends TestCase
      */
     protected function setUp(): void
     {
-        // Create a mock for the MathService dependency.
         $this->mathServiceMock = $this->createMock(MathService::class);
-
-        // Instantiate the WithdrawBusinessCommissionCalculator with the mocked MathService.
         $this->calculator = new WithdrawBusinessCommissionCalculator($this->mathServiceMock);
     }
 
     public function testCalculateBusinessWithdrawCommission()
     {
-        // Define a test transaction with known values.
         $transaction = new Transaction(
-            1, // User ID
-            'business', // User type
-            'withdraw', // Operation type
-            1000.0, // Amount
-            'EUR', // Currency
-            new DateTime('now') // Date
+            1,
+            'business',
+            'withdraw',
+            1000.0,
+            'EUR',
+            new DateTime('now')
         );
-
-        // Set the expected fee and configure the mock to return this fee.
-        $expectedFee = '5.00'; // Assuming the business fee is 0.5% for easy math.
+        $expectedFee = '5.00';
         $this->mathServiceMock->method('bcRoundUp')->willReturn($expectedFee);
-
-        // Call the calculate method.
         $commission = $this->calculator->calculate($transaction);
-
-        // Check that the commission is calculated as expected.
         $this->assertEquals($expectedFee, $commission, 'The calculated commission should match the expected fee.');
     }
 }
