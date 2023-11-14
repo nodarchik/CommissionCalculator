@@ -22,14 +22,11 @@ class TransactionController
     }
     public function processTransactions(string $inputFilePath): void
     {
-        echo "Starting process from {$inputFilePath}...\n";
-
         try {
             foreach ($this->csvReader->read($inputFilePath) as $transaction) {
                 $commission = $this->transactionService->processTransaction($transaction);
                 echo "Commission: {$commission}\n";
             }
-            echo "Processing complete.\n";
         } catch (Exception $e) {
             echo "An error occurred: " . $e->getMessage() . "\n";
         }

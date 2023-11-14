@@ -1,4 +1,3 @@
-# Use the specified PHP image as the base
 FROM php:8.2-cli
 
 RUN apt-get update && \
@@ -9,12 +8,6 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 WORKDIR /app
 
-COPY composer.json ./
-
-RUN composer install --no-scripts --no-autoloader
-
 COPY . .
 
-RUN composer dump-autoload --optimize
-
-RUN chown -R www-data:www-data /app
+RUN composer install

@@ -6,7 +6,9 @@ services:
     image: commission-calculator:latest
     volumes:
       - ./:/app
-      - /app/vendor
+      - vendor:/app/vendor
+    ports:
+      - "9000:9000"
     command: ["php", "script.php", "input.csv"]
 
   phpunit:
@@ -14,5 +16,8 @@ services:
     image: commission-calculator:latest
     volumes:
       - ./:/app
-      - /app/vendor
+      - vendor:/app/vendor
     command: ["./bin/phpunit"]
+
+volumes:
+  vendor:

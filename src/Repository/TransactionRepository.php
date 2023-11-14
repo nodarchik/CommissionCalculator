@@ -15,7 +15,7 @@ class TransactionRepository
     {
         $this->transactions[] = $transaction;
     }
-    public function getTransactionsForUserInWeek(int $userId, DateTime $date): array
+    public function getTransactionsForUserInWeek(string $userId, DateTime $date): array
     {
         try {
             $startOfWeek = clone $date;
@@ -24,7 +24,6 @@ class TransactionRepository
             $endOfWeek = clone $date;
             $endOfWeek->modify('sunday this week')->setTime(23, 59, 59);
 
-            // Convert DateTime objects to string format for comparison
             $startOfWeekStr = $startOfWeek->format('Y-m-d H:i:s');
             $endOfWeekStr = $endOfWeek->format('Y-m-d H:i:s');
 

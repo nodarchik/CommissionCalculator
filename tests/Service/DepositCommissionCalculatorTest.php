@@ -30,10 +30,10 @@ class DepositCommissionCalculatorTest extends TestCase
     public function testCalculateDepositCommission()
     {
         $transaction = new Transaction(
-            1,
+            '1',
             'private',
             'deposit',
-            200.0,
+            '200.0',
             'EUR',
             new DateTime('now')
         );

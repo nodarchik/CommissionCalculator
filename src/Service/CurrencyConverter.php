@@ -19,13 +19,13 @@ class CurrencyConverter
     /**
      * @throws GuzzleException
      */
-    public function convertAmountToDefaultCurrency(float $amount, string $currency): float
+    public function convertAmountToDefaultCurrency(string $amount, string $currency): float
     {
         $exchangeRates = $this->fetchExchangeRates();
         if ($currency === Constants::DEFAULT_CURRENCY || !isset($exchangeRates[$currency])) {
-            return $amount;
+            return floatval($amount);
         }
-        $result = bcdiv((string)$amount, (string)$exchangeRates[$currency], Constants::BC_SCALE);
+        $result = bcdiv($amount, (string)$exchangeRates[$currency], Constants::BC_SCALE);
         return floatval($result);
     }
 

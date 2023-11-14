@@ -8,7 +8,7 @@ use DateTime;
 
 class Transaction
 {
-    private int $userId;
+    private string $userId;
     private string $userType;
     private string $operationType;
     private string $amount;
@@ -16,7 +16,7 @@ class Transaction
     private DateTime $date;
 
     public function __construct(
-        int $userId,
+        string $userId,
         string $userType,
         string $operationType,
         string $amount,
@@ -31,7 +31,7 @@ class Transaction
         $this->date = $date;
     }
 
-    public function getUserId(): int
+    public function getUserId(): string
     {
         return $this->userId;
     }

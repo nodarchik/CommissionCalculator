@@ -30,10 +30,10 @@ class WithdrawBusinessCommissionCalculatorTest extends TestCase
     public function testCalculateBusinessWithdrawCommission()
     {
         $transaction = new Transaction(
-            1,
+            '1',
             'business',
             'withdraw',
-            1000.0,
+            '1000.0',
             'EUR',
             new DateTime('now')
         );

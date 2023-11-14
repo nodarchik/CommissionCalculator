@@ -31,7 +31,7 @@ class CurrencyConverterTest extends TestCase
      */
     public function testConvertToDefaultCurrencyWithDifferentCurrency()
     {
-        $amount = 100.0;
+        $amount = '100.0';
         $currency = 'USD';
         $exchangeRate = 1.2;
         $this->apiClientMock->method('fetchExchangeRates')

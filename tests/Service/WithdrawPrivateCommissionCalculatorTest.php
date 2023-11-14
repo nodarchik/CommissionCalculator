@@ -59,7 +59,7 @@ class WithdrawPrivateCommissionCalculatorTest extends TestCase
         $this->mathServiceMock->method('bcRoundUp')
             ->willReturn('0.00');
 
-        $transaction = new Transaction(1, 'private', 'withdraw', 100.0, 'EUR', new DateTime('this week'));
+        $transaction = new Transaction('1', 'private', 'withdraw', '100.0', 'EUR', new DateTime('this week'));
 
         $commission = $this->calculator->calculate($transaction);
 
@@ -83,7 +83,7 @@ class WithdrawPrivateCommissionCalculatorTest extends TestCase
         $this->mathServiceMock->method('bcRoundUp')
             ->willReturn('1.10');
 
-        $transaction = new Transaction(1, 'private', 'withdraw', 1000.0, 'USD', new DateTime('this week'));
+        $transaction = new Transaction('1', 'private', 'withdraw', '1000.0', 'USD', new DateTime('this week'));
 
         $commission = $this->calculator->calculate($transaction);
 
@@ -102,8 +102,8 @@ class WithdrawPrivateCommissionCalculatorTest extends TestCase
         ];
         $this->transactionRepositoryMock->method('getTransactionsForUserInWeek')
             ->willReturnOnConsecutiveCalls($transactions, []);
-        $transaction1 = new Transaction(1, 'private', 'withdraw', 100.0, 'EUR', new DateTime('this week'));
-        $transaction2 = new Transaction(1, 'private', 'withdraw', 100.0, 'EUR', new DateTime('this week'));
+        $transaction1 = new Transaction('1', 'private', 'withdraw', '100.0', 'EUR', new DateTime('this week'));
+        $transaction2 = new Transaction('1', 'private', 'withdraw', '100.0', 'EUR', new DateTime('this week'));
         $this->calculator->calculate($transaction1);
         $commission = $this->calculator->calculate($transaction2);
         $this->assertEquals('0.00', $commission, 'The counters should be reset between transactions.');
