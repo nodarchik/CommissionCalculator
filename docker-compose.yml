@@ -9,7 +9,6 @@ services:
       - vendor:/app/vendor
     ports:
       - "9000:9000"
-    command: ["php", "script.php", "input.csv"]
 
   phpunit:
     build: .

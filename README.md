@@ -20,10 +20,10 @@ List the different parameters available to your container
 | `script.php` | The PHP script that will be executed. Starting point of application.                                                    |
 | `input.csv`  | The input CSV file containing transactions to process, You can change name in ClI to insert your data.                  |
 
-## Build and start the Docker container, it will automatically display the results in CLI
+## Build and start the Docker container, it will automatically display the results in CLI, input.csv is the default file name, you can change it in CLI.
 
 ```sh
-docker-compose run -e INPUT_FILE=input.csv app
+docker-compose run app php script.php input.csv
 ```
 
 ## Start Tests
