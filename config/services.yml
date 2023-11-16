@@ -1,7 +1,0 @@
-services:
-  App\Service\CurrencyConverter:
-    arguments:
-      $exchangeRateAPI: '%exchangeRateAPI%'
-  App\Service\CommissionCalculator\BusinessCommissionCalculator: ~
-  App\Service\CommissionCalculator\PrivateCommissionCalculator: ~
-  App\Service\TransactionService: ~

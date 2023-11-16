@@ -32,15 +32,14 @@ class CurrencyConverter
     /**
      * @throws GuzzleException
      */
-    public function convertAmountFromDefaultCurrency(float $amount, string $currency): float
+    public function convertAmountFromDefaultCurrency(string $amount, string $currency): string
     {
         $exchangeRates = $this->fetchExchangeRates();
 
         if ($currency === Constants::DEFAULT_CURRENCY || !isset($exchangeRates[$currency])) {
             return $amount;
         }
-        $result = bcmul((string)$amount, (string)$exchangeRates[$currency], Constants::BC_SCALE);
-        return floatval($result);
+        return bcmul($amount, (string)$exchangeRates[$currency], Constants::BC_SCALE);
     }
 
     /**

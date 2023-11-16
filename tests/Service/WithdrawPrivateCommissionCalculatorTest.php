@@ -78,7 +78,7 @@ class WithdrawPrivateCommissionCalculatorTest extends TestCase
             ->willReturn(900.0);
 
         $this->currencyConverterMock->method('convertAmountFromDefaultCurrency')
-            ->willReturn(1.1);
+            ->willReturn('1.1');
 
         $this->mathServiceMock->method('bcRoundUp')
             ->willReturn('1.10');

@@ -25,7 +25,7 @@ class TransactionController
         try {
             foreach ($this->csvReader->read($inputFilePath) as $transaction) {
                 $commission = $this->transactionService->processTransaction($transaction);
-                echo "Commission: {$commission}\n";
+                echo "{$commission}\n";
             }
         } catch (Exception $e) {
             echo "An error occurred: " . $e->getMessage() . "\n";

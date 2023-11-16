@@ -93,7 +93,7 @@ class WithdrawPrivateCommissionCalculator extends WithdrawCommissionCalculator
     {
         $fee = bcmul((string)$amountInEur, (string)Constants::PRIVATE_COMMISSION_RATE, Constants::BC_SCALE);
         $feeInTransactionCurrency = $this->currencyConverter->convertAmountFromDefaultCurrency(
-            (float)$fee,
+            $fee,
             $currency
         );
         $decimals = Constants::CURRENCY_DECIMALS[$currency] ?? Constants::DECIMALS_NUMBER;

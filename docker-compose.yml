@@ -4,19 +4,13 @@ services:
   app:
     build: .
     image: commission-calculator:latest
-    volumes:
-      - ./:/app
-      - vendor:/app/vendor
     ports:
       - "9000:9000"
 
   phpunit:
     build: .
     image: commission-calculator:latest
-    volumes:
-      - ./:/app
-      - vendor:/app/vendor
-    command: ["./bin/phpunit"]
+    command: ["/app/bin/phpunit"]
 
 volumes:
   vendor:
